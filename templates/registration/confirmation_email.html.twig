@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+<div style="background-color: #2c3e50; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: white; margin: 0;">🐾 SymPet</h1>
+</div>
+
+<div style="background-color: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #ddd;">
+    <h2 style="color: #2c3e50;">Confirmez votre adresse email</h2>
+
+    <p>Bonjour et bienvenue sur SymPet ! 🎉</p>
+    <p>Merci de vous être inscrit. Cliquez sur le bouton ci-dessous pour confirmer votre adresse email et activer votre compte :</p>
+
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="{{ signedUrl|raw }}"
+           style="background-color: #2c3e50; color: white; padding: 14px 28px;
+                      text-decoration: none; border-radius: 5px; font-size: 16px;">
+            Confirmer mon adresse email
+        </a>
+    </div>
+
+    <p style="color: #666;">
+        Ce lien expirera dans
+        <strong>{{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}</strong>.
+    </p>
+
+    <p style="color: #666;">
+        Si vous n'avez pas créé de compte sur SymPet, ignorez cet email.
+    </p>
+
+    <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+    <p style="color: #999; font-size: 12px; text-align: center;">
+        © 2025 SymPet — Tous droits réservés 🐾
+    </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SymPet — Boutique pour Animaux{% endblock %}
+
+{% block content %}
+
+    <div class="px-4 py-5 mb-5 text-center rounded-3"
+         style="background: linear-gradient(135deg, #0f172a 0%, #0d9488 100%);">
+        <div class="py-4">
+            <h1 class="display-4 fw-bold text-white mb-3">
+                Bienvenue sur SymPet
+            </h1>
+            <p class="fs-5 text-white-50 mb-4 mx-auto" style="max-width: 600px;">
+                La boutique en ligne dédiée à vos animaux de compagnie.
+                Nourriture, accessoires et tout ce dont ils ont besoin,
+                livré directement chez vous.
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{{ path('app_produit_index') }}"
+                   class="btn btn-light btn-lg px-4">
+                    <i class="bi bi-grid"></i> Voir nos produits
+                </a>
+                {% if not app.user %}
+                    <a href="{{ path('app_register') }}"
+                       class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-person-plus"></i> Créer un compte
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if not app.user %}
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body p-4 text-center">
+                        <h4 class="fw-bold mb-3">Accédez à votre compte</h4>
+                        <p class="text-muted mb-4">
+                            Connectez-vous pour passer des commandes et suivre vos achats.
+                        </p>
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <a href="{{ path('app_login') }}"
+                               class="btn btn-primary btn-lg">
+                                <i class="bi bi-envelope"></i> Se connecter
+                            </a>
+                            <a href="{{ path('connect_google') }}"
+                               class="btn btn-outline-danger btn-lg">
+                                <img src="https://www.google.com/favicon.ico" width="18" class="me-2">
+                                Continuer avec Google
+                            </a>
+                        </div>
+                        <hr class="my-3">
+                        <p class="text-muted small mb-0">
+                            Pas encore de compte ?
+                            <a href="{{ path('app_register') }}">S'inscrire gratuitement</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <div class="mb-5">
+        <h2 class="fw-bold mb-4 text-center">Nos Catégories</h2>
+        <div class="row row-cols-2 row-cols-md-5 g-3">
+            {% for categorie in categories %}
+                <div class="col">
+                    <a href="{{ path('app_produit_index', {categorie: categorie.id}) }}"
+                       class="text-decoration-none">
+                        <div class="card text-center h-100 shadow-sm border-0">
+                            <div class="card-body py-3">
+                                {% if categorie.image %}
+                                    <img src="{{ asset('uploads/categories/' ~ categorie.image) }}"
+                                         style="height:80px; object-fit:cover; border-radius:8px;">
+                                {% else %}
+                                    <div style="font-size:2.5rem;">🐾</div>
+                                {% endif %}
+                                <p class="fw-bold mt-2 mb-0">{{ categorie.nom }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Nouveautés</h2>
+            <a href="{{ path('app_produit_index') }}" class="btn btn-outline-primary">
+                Voir tout <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for produit in produits %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if produit.image %}
+                            <img src="{{ asset('uploads/produits/' ~ produit.image) }}"
+                                 class="card-img-top"
+                                 style="height: 180px; object-fit: cover;"
+                                 alt="{{ produit.nom }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center
+                                    justify-content-center"
+                                 style="height: 180px; font-size: 3rem;">
+                                🐾
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold">{{ produit.nom }}</h6>
+                            <p class="text-muted small">{{ produit.categorie.nom }}</p>
+                            <p class="text-primary fw-bold">{{ produit.prix }} TND</p>
+                        </div>
+                        <div class="card-footer d-flex gap-2">
+                            <a href="{{ path('app_produit_detail', {id: produit.id}) }}"
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="bi bi-eye"></i> Détail
+                            </a>
+
+                            {% if produit.stock > 0 %}
+                                <a href="{{ path('app_panier_ajouter', {id: produit.id}) }}"
+                                   class="btn btn-primary btn-sm flex-fill">
+                                    <i class="bi bi-cart-plus"></i> Ajouter
+                                </a>
+                            {% else %}
+                                <button class="btn btn-danger btn-sm flex-fill" disabled>
+                                    Rupture de stock
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5 text-center">
+        <h2 class="fw-bold mb-3">Pourquoi SymPet ?</h2>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 p-3">
+                <div style="font-size: 2.5rem;">🚚</div>
+                <h5 class="fw-bold mt-2">Livraison Rapide</h5>
+                <p class="text-muted small">Commandez aujourd'hui, recevez demain.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 p-3">
+                <div style="font-size: 2.5rem;">✅</div>
+                <h5 class="fw-bold mt-2">Produits Certifiés</h5>
+                <p class="text-muted small">Tous nos produits sont testés et approuvés.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 p-3">
+                <div style="font-size: 2.5rem;">💳</div>
+                <h5 class="fw-bold mt-2">Paiement Sécurisé</h5>
+                <p class="text-muted small">Paiement en ligne sécurisé via Stripe.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 p-3">
+                <div style="font-size: 2.5rem;">🤖</div>
+                <h5 class="fw-bold mt-2">Recherche Intelligente</h5>
+                <p class="text-muted small">Notre IA vous aide à trouver le bon produit.</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

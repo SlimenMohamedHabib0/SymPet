@@ -15,6 +15,15 @@ class LigneCommandeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, LigneCommande::class);
     }
+    public function getTopProduits(int $limit = 5): array {
+        return $this->createQueryBuilder('lc')
+            ->select('p.nom, SUM(lc.quantite) as total_vendu')
+            ->join('lc.produit', 'p')
+            ->groupBy('p.id')
+            ->orderBy('total_vendu', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()->getArrayResult();
+    }
 
     //    /**
     //     * @return LigneCommande[] Returns an array of LigneCommande objects

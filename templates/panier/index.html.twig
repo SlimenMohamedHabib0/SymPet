@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon Panier — SymPet{% endblock %}
+{% block content %}
+    <h1 class='fw-bold mb-4'><i class='bi bi-cart3'></i> Mon Panier</h1>
+    {% if contenu is empty %}
+        <div class='alert alert-info'>
+            Votre panier est vide.
+            <a href='{{ path('app_produit_index') }}'>Continuer mes achats</a>
+        </div>
+    {% else %}
+        <div class='table-responsive'>
+            <table class='table table-hover align-middle'>
+                <thead class='table-dark'>
+                <tr><th>Produit</th><th>Prix</th><th>Quantite</th><th>Sous-total</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                {% for item in contenu %}
+                    <tr>
+                        <td>{{ item.produit.nom }}</td>
+                        <td>{{ item.produit.prix }} TND</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-1">
+                                <a href="{{ path('app_panier_modifier', {id: item.produit.id, qty: item.quantite - 1}) }}"
+                                   class="btn btn-outline-secondary btn-sm">−</a>
+                                <span class="px-2 fw-bold">{{ item.quantite }}</span>
+                                <a href="{{ path('app_panier_modifier', {id: item.produit.id, qty: item.quantite + 1}) }}"
+                                   class="btn btn-outline-secondary btn-sm">+</a>
+                            </div>
+                        </td>
+                        <td>{{ (item.produit.prix * item.quantite)|number_format(2) }} TND</td>
+                        <td>
+                            <a href='{{ path('app_panier_supprimer', {id: item.produit.id}) }}'
+                               class='btn btn-danger btn-sm'>
+                                <i class='bi bi-trash'></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr class='table-primary fw-bold'>
+                    <td colspan='3'>Total</td>
+                    <td>{{ total|number_format(2) }} TND</td>
+                    <td></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class='d-flex justify-content-between mt-3'>
+            <div class="d-flex gap-2">
+                <a href='{{ path('app_produit_index') }}' class='btn btn-outline-secondary'>
+                    <i class='bi bi-arrow-left'></i> Continuer mes achats
+                </a>
+                <a href='{{ path('app_panier_vider') }}' class='btn btn-outline-danger'
+                   onclick="return confirm('Vider tout le panier ?')">
+                    <i class='bi bi-trash'></i> Vider le panier
+                </a>
+            </div>
+            <a href='{{ path('app_commande_valider') }}' class='btn btn-primary btn-lg'>
+                <i class='bi bi-check-circle'></i> Valider la commande
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Produits — SymPet{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold">Nos Produits</h1>
+    </div>
+
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-md-3">
+            <input type="text" name="q" value="{{ q }}"
+                   class="form-control" placeholder="Rechercher un produit...">
+        </div>
+        <div class="col-md-2">
+            <select name="categorie" class="form-select">
+                <option value="">Toutes les catégories</option>
+                {% for categorie in categories %}
+                    <option value="{{ categorie.id }}"
+                        {{ categorieId == categorie.id ? 'selected' : '' }}>
+                        {{ categorie.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="prix_min" value="{{ prixMin }}"
+                   class="form-control" placeholder="Prix min (TND)" step="5" min="0">
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="prix_max" value="{{ prixMax }}"
+                   class="form-control" placeholder="Prix max (TND)" step="5" min="0">
+        </div>
+        <div class="col-md-2">
+            <select name="tri" class="form-select">
+                <option value="recent"    {{ tri == 'recent'    ? 'selected' : '' }}>Plus récent</option>
+                <option value="prix_asc"  {{ tri == 'prix_asc'  ? 'selected' : '' }}>Prix croissant</option>
+                <option value="prix_desc" {{ tri == 'prix_desc' ? 'selected' : '' }}>Prix décroissant</option>
+                <option value="nom"       {{ tri == 'nom'       ? 'selected' : '' }}>Nom A-Z</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </form>
+
+    {% if produits|length == 0 %}
+        <div class="alert alert-info">
+            Aucun produit trouvé.
+        </div>
+    {% else %}
+        <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
+            {% for produit in produits %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if produit.image %}
+                            <img src="{{ asset('uploads/produits/' ~ produit.image) }}"
+                                 class="card-img-top" style="height: 200px; object-fit: cover;"
+                                 alt="{{ produit.nom }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height: 200px; font-size: 4rem;">
+                                🐾 Image
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ produit.nom }}</h5>
+                            <p class="text-muted small">{{ produit.categorie.nom }}</p>
+                            <p class="fw-bold text-primary fs-5 mt-auto">
+                                {{ produit.prix }} TND
+                            </p>
+                        </div>
+                        <div class="card-footer d-flex gap-2">
+                            <a href="{{ path('app_produit_detail', {id: produit.id}) }}"
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="bi bi-eye"></i> Voir détail
+                            </a>
+                            {% if produit.stock > 0 %}
+                                <a href="{{ path('app_panier_ajouter', {id: produit.id}) }}"
+                                   class="btn btn-primary btn-sm flex-fill">
+                                    <i class="bi bi-cart-plus"></i> Ajouter
+                                </a>
+                            {% else %}
+                                <button class="btn btn-danger btn-sm flex-fill" disabled>
+                                     Rupture de stock
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="d-flex justify-content-center">
+            {{ knp_pagination_render(produits) }}
+        </div>
+    {% endif %}
+
+{% endblock %}

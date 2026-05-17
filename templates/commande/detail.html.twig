@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+    <h1><i class='bi bi-receipt'></i> Commande #{{ commande.numeroCommande }}</h1>
+    <a href='{{ path('app_commande_historique') }}' class='btn btn-outline-secondary'>Retour</a>
+    <div class='row mt-3'>
+    <div class='col-md-4'><div class='card mb-3'><div class='card-body'>
+                <h5>Informations</h5>
+                <p><strong>Numero:</strong> {{ commande.numeroCommande }}</p>
+                <p><strong>Date:</strong> {{ commande.createdAt|date('d/m/Y H:i') }}</p>
+                <p>
+                    <strong>Statut:</strong>
+
+                    {% if commande.statut == 'en_attente' %}
+                        <span class="badge bg-warning text-dark">
+            En attente de paiement
+        </span>
+
+                    {% elseif commande.statut == 'en_cours' %}
+                        <span class="badge bg-success">
+            Paiement confirmé
+        </span>
+
+                    {% else %}
+                        <span class="badge bg-secondary">
+            {{ commande.statut }}
+        </span>
+                    {% endif %}
+                </p>
+                <p><strong>Total:</strong> {{ commande.total|number_format(2) }} TND</p>
+            </div></div></div>
+    <div class='col-md-8'><div class='card'><div class='card-body'>
+                <h5>Articles commandes</h5>
+                <table class='table align-middle'>
+                    <thead class='table-light'>
+                    <tr><th>Produit</th><th>Prix unit.</th><th>Quantite</th><th>Sous-total</th></tr>
+                    </thead>
+                    <tbody>{% for ligne in commande.ligneCommandes %}
+                        <tr>
+                            <td>{% if ligne.produit.image %}
+                                    <img src='{{ asset('uploads/produits/' ~ ligne.produit.image) }}'
+                                         style='width:50px;height:50px;object-fit:cover;border-radius:4px;' class='me-2'>
+                                {% endif %}{{ ligne.produit.nom }}</td>
+                            <td>{{ ligne.prixUnitaire }} TND</td>
+                            <td>{{ ligne.quantite }}</td>
+                            <td class='fw-bold'>
+                                {{ (ligne.prixUnitaire * ligne.quantite)|number_format(2) }} TND</td>
+                        </tr>
+                    {% endfor %}</tbody>
+                    <tfoot><tr class='table-primary fw-bold'>
+                        <td colspan='3'>Total</td>
+                        <td>{{ commande.total|number_format(2) }} TND</td>
+                    </tr></tfoot>
+                </table>
+            </div></div></div>
+    </div>{% endblock %}

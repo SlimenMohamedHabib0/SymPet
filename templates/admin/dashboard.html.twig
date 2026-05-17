@@ -1,0 +1,586 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+
+    <style>
+
+        body{
+            background:#f4f7fb;
+        }
+
+        .dashboard-card{
+            border:none;
+            border-radius:22px;
+            transition:0.25s;
+            overflow:hidden;
+            min-height:170px;
+            background:white;
+        }
+
+        .dashboard-card:hover{
+            transform:translateY(-6px) scale(1.02);
+            box-shadow:0 15px 35px rgba(0,0,0,0.12)!important;
+        }
+
+        .stats-icon{
+            width:65px;
+            height:65px;
+            border-radius:18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.8rem;
+        }
+
+        .chart-card{
+            border:none;
+            border-radius:24px;
+            background:white;
+        }
+
+        .dashboard-title{
+            letter-spacing:3px;
+            font-size:1rem;
+            font-weight:700;
+            color:#64748b;
+            text-transform:uppercase;
+        }
+
+        .big-number{
+            font-size:2.2rem;
+            font-weight:700;
+            color:#0f172a;
+        }
+
+        .mini-text{
+            color:#94a3b8;
+            font-size:0.95rem;
+        }
+
+        .top-box{
+            min-height:190px;
+        }
+
+    </style>
+
+    <div class="container-fluid px-2 px-md-4">
+
+        <!-- HERO -->
+
+        <div class="px-4 py-5 mb-5 text-center rounded-4 shadow-lg"
+             style="background: linear-gradient(135deg,#0f172a 0%,#0d9488 100%);">
+
+            <h1 class="display-4 fw-bold text-white mb-3">
+                Dashboard Administrateur
+            </h1>
+
+            <p class="text-white-50 fs-5 mx-auto"
+               style="max-width:700px;">
+
+                Gérez les produits, commandes, utilisateurs
+                et statistiques de SymPet.
+            </p>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+
+                <a href="/admin/produit/"
+                   class="btn btn-light btn-lg px-4 rounded-4">
+
+                    <i class="bi bi-box"></i>
+                    Produits
+                </a>
+
+                <a href="/admin/commande/"
+                   class="btn btn-outline-light btn-lg px-4 rounded-4">
+
+                    <i class="bi bi-cart"></i>
+                    Commandes
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- STATS CARDS -->
+
+        <div class="row g-4">
+
+            <!-- CLIENTS -->
+
+            <div class="col-md-3">
+                <a href="/admin/user/" class="text-decoration-none">
+
+                    <div class="card dashboard-card shadow-sm p-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="dashboard-title">
+                                    Clients
+                                </div>
+
+                                <div class="big-number">
+                                    {{ nbClients }}
+                                </div>
+                            </div>
+
+                            <div class="stats-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+            <!-- COMMANDES -->
+
+            <div class="col-md-3">
+                <a href="/admin/commande/" class="text-decoration-none">
+
+                    <div class="card dashboard-card shadow-sm p-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="dashboard-title">
+                                    Commandes
+                                </div>
+
+                                <div class="big-number">
+                                    {{ nbCommandes }}
+                                </div>
+                            </div>
+
+                            <div class="stats-icon bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-cart-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+            <!-- CA -->
+
+            <div class="col-md-3">
+                <a href="/admin/commande/" class="text-decoration-none">
+
+                    <div class="card dashboard-card shadow-sm p-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="dashboard-title">
+                                    CA Total
+                                </div>
+
+                                <div class="big-number" style="font-size:1.9rem;">
+                                    {{ caTotal }} DT
+                                </div>
+                            </div>
+
+                            <div class="stats-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+            <!-- AVIS -->
+
+            <div class="col-md-3">
+                <a href="/admin/avis/" class="text-decoration-none">
+
+                    <div class="card dashboard-card shadow-sm p-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+
+                                <div class="dashboard-title">
+                                    Note moyenne
+                                </div>
+
+                                <div class="big-number">
+                                    {{ moyenneAvis }}/5
+                                </div>
+
+                                <div class="mini-text">
+                                    Basé sur {{ nbAvis }} avis
+                                </div>
+
+                            </div>
+
+                            <div class="stats-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+        </div>
+
+        <!-- SECOND ROW -->
+
+        <div class="row g-4 mt-1">
+
+            <div class="col-md-3">
+                <a href="/admin/produit/" class="text-decoration-none">
+
+                    <div class="card dashboard-card shadow-sm p-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="dashboard-title">
+                                    Produits
+                                </div>
+
+                                <div class="big-number">
+                                    {{ nbProduits }}
+                                </div>
+                            </div>
+
+                            <div class="stats-icon bg-info bg-opacity-10 text-info">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a href="/admin/categorie/" class="text-decoration-none">
+
+                    <div class="card dashboard-card shadow-sm p-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="dashboard-title">
+                                    Catégories
+                                </div>
+
+                                <div class="big-number">
+                                    {{ nbCategories }}
+                                </div>
+                            </div>
+
+                            <div class="stats-icon bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-tags-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a href="/admin/produit/" class="text-decoration-none">
+
+                    <div class="card dashboard-card shadow-sm p-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+
+                                <div class="dashboard-title">
+                                    Rupture Stock
+                                </div>
+
+                                <div class="big-number text-danger">
+                                    {{ ruptureStock }}
+                                </div>
+
+                            </div>
+
+                            <div class="stats-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="card dashboard-card shadow-sm p-4">
+
+                    <div class="dashboard-title mb-3">
+                        Produit Top Vente
+                    </div>
+
+                    <h5 class="fw-bold text-primary">
+                        {{ topProduit.nom }}
+                    </h5>
+
+                    <div class="mini-text">
+                        {{ topProduit.total }} ventes
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BIG INFO -->
+
+        <div class="row g-4 mt-1">
+
+            <div class="col-md-6">
+
+                <div class="card chart-card shadow-sm p-4 top-box">
+
+                    <div class="dashboard-title mb-3">
+                        Catégorie la plus vendue
+                    </div>
+
+                    <h1 class="fw-bold text-success">
+                        {{ topCategorie.nom }}
+                    </h1>
+
+                    <div class="mini-text">
+                        {{ topCategorie.total }} ventes
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="card chart-card shadow-sm p-4 top-box">
+
+                    <div class="dashboard-title mb-4">
+                        Performance Globale
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Commandes enregistrées</span>
+                        <strong>{{ nbCommandes }}</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Clients inscrits</span>
+                        <strong>{{ nbClients }}</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Produits disponibles</span>
+                        <strong>{{ nbProduits }}</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <span>Catégories</span>
+                        <strong>{{ nbCategories }}</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CHARTS -->
+
+        <div class="row g-4 mt-1">
+
+            <div class="col-lg-6">
+
+                <div class="card chart-card shadow-sm p-4">
+
+                    <h5 class="dashboard-title mb-4">
+                        Commandes Mensuelles
+                    </h5>
+
+                    <div style="height:350px;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <div class="card chart-card shadow-sm p-4">
+
+                    <h5 class="dashboard-title mb-4">
+                        Chiffre d'Affaires
+                    </h5>
+
+                    <div style="height:350px;">
+                        <canvas id="caChart"></canvas>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- LAST ROW -->
+
+        <div class="row g-4 mt-1">
+
+            <div class="col-lg-6">
+
+                <div class="card chart-card shadow-sm p-4">
+
+                    <h5 class="dashboard-title mb-4">
+                        Produits par catégorie
+                    </h5>
+
+                    <div style="height:400px;">
+                        <canvas id="categorieChart"></canvas>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <div class="card chart-card shadow-sm p-4">
+
+                    <h5 class="dashboard-title mb-4">
+                        Évolution des avis
+                    </h5>
+
+                    <div style="height:400px;">
+                        <canvas id="avisChart"></canvas>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // COMMANDES
+
+            new Chart(document.getElementById('salesChart'), {
+                type: 'line',
+                data: {
+                    labels: {{ commandesParMois|map(v => v.mois)|json_encode|raw }},
+                    datasets: [{
+                        label: 'Commandes',
+                        data: {{ commandesParMois|map(v => v.total)|json_encode|raw }},
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // CA
+
+            new Chart(document.getElementById('caChart'), {
+                type: 'bar',
+                data: {
+                    labels: {{ caParMois|map(v => v.mois)|json_encode|raw }},
+                    datasets: [{
+                        label: 'CA',
+                        data: {{ caParMois|map(v => v.total)|json_encode|raw }},
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // PIE
+
+            new Chart(document.getElementById('categorieChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: {{ produitsParCategorie|map(v => v.categorie)|json_encode|raw }},
+                    datasets: [{
+                        data: {{ produitsParCategorie|map(v => v.total)|json_encode|raw }},
+                        borderWidth:2
+                    }]
+                },
+                options: {
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    plugins:{
+                        legend:{
+                            position:'bottom'
+                        }
+                    }
+                }
+            });
+
+            // AVIS
+
+            const avisLabels = {{ avisParNote|map(v => v.note ~ '/5')|json_encode|raw }};
+            const avisData = {{ avisParNote|map(v => v.total)|json_encode|raw }};
+
+            new Chart(document.getElementById('avisChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: avisLabels,
+                    datasets: [{
+                        label: 'Avis',
+                        data: avisData,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+        });
+
+    </script>
+
+{% endblock %}

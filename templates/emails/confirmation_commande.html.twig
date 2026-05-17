@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang='fr'>
+<body style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;'>
+<div style='background:#0f172a;padding:20px;text-align:center;border-radius:8px 8px 0 0;'>
+    <h1 style='color:white;margin:0;'>SymPet</h1>
+</div>
+<div style='background:#f9f9f9;padding:30px;border:1px solid #ddd;border-radius:0 0 8px 8px;'>
+    <h2>Confirmation de votre commande</h2>
+    <p>Bonjour <strong>{{ commande.user.prenom }}</strong>,</p>
+    <p><strong>Numero:</strong> {{ commande.numeroCommande }}</p>
+    <p><strong>Date:</strong> {{ commande.createdAt|date('d/m/Y H:i') }}</p>
+    <table style='width:100%;border-collapse:collapse;'>
+        <thead><tr style='background:#0f172a;color:white;'>
+            <th style='padding:8px;'>Produit</th>
+            <th style='padding:8px;text-align:center;'>Qte</th>
+            <th style='padding:8px;text-align:right;'>Prix</th>
+            <th style='padding:8px;text-align:right;'>Sous-total</th>
+        </tr></thead>
+        <tbody>{% for ligne in contenu %}
+            <tr style='border-bottom:1px solid #ddd;'>
+            <td style='padding:8px;'>{{ ligne.produit.nom }}</td>
+            <td style='padding:8px;text-align:center;'>{{ ligne.quantite }}</td>
+            <td style='padding:8px;text-align:right;'>{{ ligne.produit.prix }} TND</td>
+            <td style='padding:8px;text-align:right;'>
+                {{ (ligne.produit.prix * ligne.quantite)|number_format(2) }} TND</td>
+            </tr>{% endfor %}
+        </tbody>
+        <tfoot><tr style='font-weight:bold;background:#f0f0f0;'>
+            <td colspan='3' style='padding:8px;'>Total</td>
+            <td style='padding:8px;text-align:right;'>{{ commande.total|number_format(2) }} TND</td>
+        </tr></tfoot>
+    </table>
+    <p>Merci pour votre confiance!</p>
+</div>
+</body></html>
