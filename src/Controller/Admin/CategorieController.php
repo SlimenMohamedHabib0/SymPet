@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/admin/categorie')]
+#[IsGranted('ROLE_ADMIN')]
 final class CategorieController extends AbstractController
 {
     #[Route(name: 'app_admin_categorie_index', methods: ['GET'])]
@@ -30,9 +31,10 @@ final class CategorieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $categorie->setUpdatedAt(new \DateTimeImmutable());
             $entityManager->persist($categorie);
             $entityManager->flush();
-
+            $this->addFlash('success', 'Catégorie cree avec succes!');
             return $this->redirectToRoute('app_admin_categorie_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -60,6 +62,7 @@ final class CategorieController extends AbstractController
             $entityManager->flush();
 
             return $this->redirectToRoute('app_admin_categorie_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Catégorie modifie avec succes!');
         }
 
         return $this->render('admin/categorie/edit.html.twig', [
@@ -74,6 +77,8 @@ final class CategorieController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$categorie->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($categorie);
             $entityManager->flush();
+            $this->addFlash('success', 'Catégorie supprime avec succes!');
+
         }
 
         return $this->redirectToRoute('app_admin_categorie_index', [], Response::HTTP_SEE_OTHER);

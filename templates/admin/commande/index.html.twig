@@ -1,41 +1,69 @@
 {% extends 'base.html.twig' %}
+{% block title %}Gestion Commandes — Admin{% endblock %}
+{% block content %}
+    <h1 class='fw-bold mb-4'><i class='bi bi-cart'></i> Commandes</h1>
+    {# Filtres statut #}
+    <div class='mb-3 d-flex gap-2 flex-wrap'>
+        <a href='{{ path('app_admin_commande_index') }}'
+           class='btn btn-outline-secondary btn-sm'>Toutes</a>
+        <a href='{{ path('app_admin_commande_index', {statut:'en_attente'}) }}'
+           class='btn btn-warning btn-sm'>En attente</a>
+        <a href='{{ path('app_admin_commande_index', {statut:'en_cours'}) }}'
+           class='btn btn-info btn-sm'>En cours</a>
+        <a href='{{ path('app_admin_commande_index', {statut:'completee'}) }}'
+           class='btn btn-success btn-sm'>Completee</a>
+        <a href='{{ path('app_admin_commande_index', {statut:'livree'}) }}'
+           class='btn btn-primary btn-sm'>Livree</a>
+    </div>
+    <div class='table-responsive'>
+        <table class='table table-hover align-middle'>
+            <thead class='table-dark'>
+            <tr><th>Numero</th><th>Client</th><th>Total</th>
+                <th>Date</th><th>Statut</th><th>Actions</th></tr>
+            </thead><tbody>
+            {% for commande in commandes %}
+                <tr>
+                    <td><strong>{{ commande.numeroCommande }}</strong></td>
+                    <td>{{ commande.user.prenom }} {{ commande.user.nom }}</td>
+                    <td>{{ commande.total|number_format(2) }} TND</td>
+                    <td>{{ commande.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% set colors = {en_attente:'warning',en_cours:'info',
+                            completee:'success',livree:'primary',annulee:'danger'} %}
+                        <span class='badge bg-{{ colors[commande.statut] ?? 'secondary' }}'>
+{{ commande.statut }}</span>
+                    </td>
+                    <td>
+                        <a href='{{ path('app_admin_commande_show', {id:commande.id}) }}'
+                           class='btn btn-sm btn-outline-info'>
+                            <i class='bi bi-eye'></i></a>
+                        {# Changer statut dropdown #}
+                        <div class='dropdown d-inline'>
+                            <button class='btn btn-sm btn-outline-secondary dropdown-toggle'
+                                    data-bs-toggle='dropdown'>Statut</button>
+                            <ul class='dropdown-menu'>
+                                {% for s in ['en_attente','en_cours','completee','livree','annulee'] %}
+                                    <li>
+                                        <form method='post' action='{{ path('app_admin_commande_statut',
+                                            {id:commande.id, statut:s}) }}'>
+                                            <input type='hidden' name='_token'
+                                                   value='{{ csrf_token('statut'~commande.id) }}'>
+                                            <button class='dropdown-item'>{{ s }}</button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan='6' class='text-center text-muted'>Aucune commande</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-{% block title %}Commande index{% endblock %}
-
-{% block body %}
-    <h1>Commande index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>NumeroCommande</th>
-                <th>Statut</th>
-                <th>Total</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for commande in commandes %}
-            <tr>
-                <td>{{ commande.id }}</td>
-                <td>{{ commande.numeroCommande }}</td>
-                <td>{{ commande.statut }}</td>
-                <td>{{ commande.total }}</td>
-                <td>{{ commande.createdAt ? commande.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_admin_commande_show', {'id': commande.id}) }}">show</a>
-                    <a href="{{ path('app_admin_commande_edit', {'id': commande.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_admin_commande_new') }}">Create new</a>
+    <div class="d-flex justify-content-center mt-3">
+        {{ knp_pagination_render(commandes) }}
+    </div>
 {% endblock %}

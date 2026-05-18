@@ -1,47 +1,50 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}User index{% endblock %}
-
-{% block body %}
-    <h1>User index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Password</th>
-                <th>CreatedAt</th>
-                <th>IsVerified</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
-                <td>
-                    <a href="{{ path('app_admin_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_admin_user_edit', {'id': user.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_admin_user_new') }}">Create new</a>
+{% block title %}Gestion Utilisateurs{% endblock %}
+{% block content %}
+    <h1 class='fw-bold mb-4'><i class='bi bi-people'></i> Utilisateurs</h1>
+    <div class='table-responsive'>
+        <table class='table table-hover align-middle'>
+            <thead class='table-dark'>
+            <tr><th>Nom</th><th>Email</th><th>Roles</th>
+                <th>Verifie</th><th>Inscrit le</th><th>Actions</th></tr>
+            </thead><tbody>
+            {% for user in users %}
+                <tr>
+                    <td><strong>{{ user.prenom }} {{ user.nom }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if 'ROLE_ADMIN' in user.roles %}
+                            <span class='badge bg-danger'>Admin</span>
+                        {% else %}
+                            <span class='badge bg-secondary'>User</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.isVerified %}
+                            <span class='badge bg-success'><i class='bi bi-check'></i></span>
+                        {% else %}
+                            <span class='badge bg-warning'>Non verifie</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        <a href='{{ path('app_admin_user_edit', {id:user.id}) }}'
+                           class='btn btn-sm btn-outline-warning'>
+                            <i class='bi bi-pencil'></i> Roles</a>
+                        {% if user != app.user %}
+                            <form method='post'
+                                  action='{{ path('app_admin_user_delete', {id:user.id}) }}'
+                                  style='display:inline'
+                                  onsubmit="return confirm('Supprimer cet utilisateur ?')">
+                                <input type='hidden' name='_token'
+                                       value='{{ csrf_token('delete'~user.id) }}'>
+                                <button class='btn btn-sm btn-outline-danger'>
+                                    <i class='bi bi-trash'></i></button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table></div>
 {% endblock %}

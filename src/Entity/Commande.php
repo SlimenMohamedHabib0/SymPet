@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\LigneCommande;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\Collection;
 
 
@@ -22,9 +23,14 @@ class Commande
     private ?string $numeroCommande = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(choices: ['en_attente','en_cours','completee','livree','annulee'],
+        message: 'Statut invalide')]
     private ?string $statut = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: 'Le total doit être positif')]
     private ?string $total = null;
 
     #[ORM\Column]

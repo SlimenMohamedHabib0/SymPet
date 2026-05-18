@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ProduitRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[Vich\Uploadable]
@@ -52,6 +55,10 @@ class Produit
     #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
 
+    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'produit')]
+    private Collection $avis;
+    public function __construct() { $this->avis = new ArrayCollection(); }
+    public function getAvis(): Collection { return $this->avis; }
     public function getId(): ?int
     {
         return $this->id;

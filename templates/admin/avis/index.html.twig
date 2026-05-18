@@ -1,39 +1,30 @@
+{# templates/admin/avis/index.html.twig #}
 {% extends 'base.html.twig' %}
-
-{% block title %}Avis index{% endblock %}
-
-{% block body %}
-    <h1>Avis index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Note</th>
-                <th>Commentaire</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for avi in avis %}
-            <tr>
-                <td>{{ avi.id }}</td>
-                <td>{{ avi.note }}</td>
-                <td>{{ avi.commentaire }}</td>
-                <td>{{ avi.createdAt ? avi.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_admin_avis_show', {'id': avi.id}) }}">show</a>
-                    <a href="{{ path('app_admin_avis_edit', {'id': avi.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_admin_avis_new') }}">Create new</a>
+{% block title %}Gestion Avis{% endblock %}
+{% block content %}
+    <h1 class='fw-bold mb-4'><i class='bi bi-star'></i> Avis clients</h1>
+    <div class='table-responsive'>
+        <table class='table table-hover align-middle'>
+            <thead class='table-dark'>
+            <tr><th>Produit</th><th>Client</th><th>Note</th>
+                <th>Commentaire</th><th>Date</th></tr>
+            </thead><tbody>
+            {% for a in avis %}
+                <tr>
+                    <td><strong>{{ a.produit.nom }}</strong></td>
+                    <td>{{ a.user.prenom }} {{ a.user.nom }}</td>
+                    <td>
+                        {% for i in 1..5 %}
+                            <i class='bi bi-star{{ i <= a.note ? '-fill' : '' }} text-warning'></i>
+                        {% endfor %}
+                    </td>
+                    <td>{{ a.commentaire|slice(0,80) }}{% if a.commentaire|length > 80 %}...{% endif %}</td>
+                    <td>{{ a.createdAt|date('d/m/Y') }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan='6' class='text-center text-muted'>Aucun avis</td></tr>
+            {% endfor %}
+            </tbody>
+        </table></div>
+    {{ knp_pagination_render(avis) }}
 {% endblock %}

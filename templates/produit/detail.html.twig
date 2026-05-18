@@ -5,8 +5,22 @@
 {% block content %}
 
     <div class="row">
+
         <div class="col-md-5">
-            {% if produit.image %}
+            <div class="card-img-top overflow-hidden" style="height:450px;">
+                {% if produit.image %}
+                    <img src="{{ asset('uploads/produits/' ~ produit.image) }}"
+                         style="width: 100%; height: 100%; object-fit: contain; padding: 8px;"
+                         class="img-fluid rounded shadow"
+                         alt="{{ produit.nom }}">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center h-100"
+                         style="font-size: 3rem;">
+                        🐾
+                    </div>
+                {% endif %}
+            </div>
+           {#  {% if produit.image %}
                 <img src="{{ asset('uploads/produits/' ~ produit.image) }}"
                      class="img-fluid rounded shadow" alt="{{ produit.nom }}">
             {% else %}
@@ -14,7 +28,7 @@
                      style="height: 350px; font-size: 6rem;">
                     🐾Image
                 </div>
-            {% endif %}
+            {% endif %}#}
         </div>
 
         <div class="col-md-7">
@@ -63,6 +77,60 @@
                 </a>
             </div>
         </div>
+    </div>
+    <div class="mt-5">
+        <h3 class="fw-bold mb-3">
+            <i class="bi bi-star"></i> Avis clients
+            {% if produit.avis|length > 0 %}
+                <small class="text-muted fs-6">({{ produit.avis|length }} avis)</small>
+            {% endif %}
+        </h3>
+
+        {% if produit.avis|length > 0 %}
+
+            {% set total_notes = 0 %}
+            {% for a in produit.avis %}
+                {% set total_notes = total_notes + a.note %}
+            {% endfor %}
+            {% set moyenne = (total_notes / produit.avis|length)|round(1) %}
+
+            <div class="mb-3">
+                {% for i in 1..5 %}
+                    <i class="bi bi-star{{ i <= moyenne ? '-fill' : '' }} text-warning fs-4"></i>
+                {% endfor %}
+                <strong>{{ moyenne }}/5</strong>
+            </div>
+
+            {% for avis in produit.avis %}
+                <div class="card mb-2 border-0 bg-light">
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>{{ avis.user.prenom }} {{ avis.user.nom }}</strong>
+                            <span>
+                        {% for i in 1..5 %}
+                            <i class="bi bi-star{{ i <= avis.note ? '-fill' : '' }} text-warning"></i>
+                        {% endfor %}
+                    </span>
+                        </div>
+                        <p class="text-muted small mb-1">{{ avis.createdAt|date('d/m/Y') }}</p>
+                        <p class="mb-0">{{ avis.commentaire }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">Aucun avis pour ce produit. Soyez le premier!</p>
+        {% endif %}
+
+        {% if app.user %}
+            <a href="{{ path('app_avis_ajouter', {id: produit.id}) }}"
+               class="btn btn-outline-primary mt-3">
+                <i class="bi bi-star"></i> Laisser un avis
+            </a>
+        {% else %}
+            <a href="{{ path('app_login') }}" class="btn btn-outline-secondary mt-3">
+                <i class="bi bi-person"></i> Connectez-vous pour laisser un avis
+            </a>
+        {% endif %}
     </div>
 
 {% endblock %}

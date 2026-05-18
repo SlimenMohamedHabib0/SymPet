@@ -1,13 +1,49 @@
 {% extends 'base.html.twig' %}
+{% block title %}Modifier Utilisateur — Admin{% endblock %}
+{% block content %}
 
-{% block title %}Edit User{% endblock %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h2 class="fw-bold mb-4">
+                        <i class="bi bi-person-gear"></i> Modifier Utilisateur<br>
+                        <small class="text-muted fs-6">{{ user.prenom }} {{ user.nom }}</small>
+                    </h2>
 
-{% block body %}
-    <h1>Edit User</h1>
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-envelope"></i> <strong>Email:</strong> {{ user.email }}<br>
+                        <i class="bi bi-calendar"></i> <strong>Inscrit le:</strong> {{ user.createdAt|date('d/m/Y') }}<br>
+                        <i class="bi bi-check-circle"></i> <strong>Vérifié:</strong>
+                        {% if user.isVerified %}
+                            <span class="badge bg-success">Oui</span>
+                        {% else %}
+                            <span class="badge bg-warning">Non</span>
+                        {% endif %}
+                    </div>
 
-    {{ include('admin/user/_form.html.twig', {'button_label': 'Update'}) }}
+                    {{ form_start(form) }}
+                    {{ form_errors(form) }}
 
-    <a href="{{ path('app_admin_user_index') }}">back to list</a>
+                    <div class="mb-4">
+                        {{ form_label(form.roles) }}
+                        {{ form_widget(form.roles) }}
+                        {{ form_errors(form.roles) }}
+                    </div>
 
-    {{ include('admin/user/_delete_form.html.twig') }}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Enregistrer
+                        </button>
+                        <a href="{{ path('app_admin_user_index') }}" class="btn btn-outline-secondary">
+                            Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

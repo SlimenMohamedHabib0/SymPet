@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\LigneCommandeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LigneCommandeRepository::class)]
 class LigneCommande
@@ -15,9 +16,13 @@ class LigneCommande
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: 'La quantité doit être positive')]
     private ?int $quantite = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: 'Le prix unitaire doit être positif')]
     private ?string $prixUnitaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'ligneCommandes')]
